@@ -1,28 +1,47 @@
 function gerarContrato(e) {
-    e.preventDefault(); // Correção da chamada do método preventDefault
+    e.preventDefault();
 
-    let servico = {
-        'contratante': {
-            "nome_empresa": document.getElementById('nome_contratante').value,
-            "endereco": document.getElementById('endereco_contratante').value,
-            "telefone": document.getElementById('telefone_contratante').value,
-            "email": document.getElementById('email_contratante').value
+    // Obtém os dados do formulário
+    const servico = getDadosFormulario();
+
+    // Gera o texto do contrato
+    const contrato = gerarTextoContrato(servico);
+
+    // Atualiza a interface do usuário com o contrato e botão de download
+    exibirContratoNaPagina(contrato);
+    configurarBotaoDownload(contrato);
+}
+
+function getDadosFormulario() {
+    return {
+        contratante: {
+            nome_empresa: valorDoCampo('nome_contratante'),
+            endereco: valorDoCampo('endereco_contratante'),
+            telefone: valorDoCampo('telefone_contratante'),
+            email: valorDoCampo('email_contratante')
         },
-        'contratado': {
-            "nome_empresa": document.getElementById('nome_contratado').value,
-            "endereco": document.getElementById('endereco_contratado').value,
-            "telefone": document.getElementById('telefone_contratado').value,
-            "email": document.getElementById('email_contratado').value
+        contratado: {
+            nome_empresa: valorDoCampo('nome_contratado'),
+            endereco: valorDoCampo('endereco_contratado'),
+            telefone: valorDoCampo('telefone_contratado'),
+            email: valorDoCampo('email_contratado')
         },
-        'descricaoServico': document.getElementById('descricao_servico').value,
-        'dataInicio': document.getElementById('data_inicio').value,
-        'dataTermino': document.getElementById('data_termino').value,
-        'valorServico': parseFloat(document.getElementById('valor_servico').value),
-        'condicaoPagamento': document.getElementById('condicaoPagamento').value,
-        'estado': document.getElementById('estado').value
+        descricaoServico: valorDoCampo('descricao_servico'),
+        dataInicio: valorDoCampo('data_inicio'),
+        dataTermino: valorDoCampo('data_termino'),
+        valorServico: parseFloat(valorDoCampo('valor_servico')),
+        condicaoPagamento: valorDoCampo('condicaoPagamento'),
+        estado: valorDoCampo('estado')
     };
+}
 
-    let contrato = `CONTRATO DE PRESTAÇÃO DE SERVIÇOS
+function valorDoCampo(id) {
+    const elemento = document.getElementById(id);
+    return elemento ? elemento.value : null;
+}
+
+function gerarTextoContrato(servico) {
+    return `CONTRATO DE PRESTAÇÃO DE SERVIÇOS
     
 Este Contrato de Prestação de Serviços é feito e entrado em vigor na data ${servico.dataInicio}, por e entre:
 
@@ -73,16 +92,19 @@ ________________________________________________________________________________
 Data: ${new Date().toLocaleDateString()}
 
 `;
-    // Exibindo o contrato na página
-    const divContrato = document.getElementById('contratoTexto');
-    divContrato.style.display = 'block'; // Torna a div visível
-    divContrato.textContent = contrato; // Adiciona o texto do contrato à div
+}
 
-    // Mostrando o botão de download e adicionando funcionalidade
+function exibirContratoNaPagina(contrato) {
+    const divContrato = document.getElementById('contratoTexto');
+    divContrato.style.display = 'block';
+    divContrato.textContent = contrato;
+}
+
+function configurarBotaoDownload(contrato) {
     const btnDownload = document.getElementById('baixarContrato');
-    btnDownload.style.display = 'inline-block'; // Torna o botão visível
+    btnDownload.style.display = 'inline-block';
     btnDownload.onclick = function () {
-        downloadContrato(contrato, 'Contrato.txt'); // Função de download ao clicar
+        downloadContrato(contrato, 'Contrato.txt');
     };
 }
 
@@ -90,11 +112,8 @@ function downloadContrato(texto, nomeArquivo) {
     const elemento = document.createElement('a');
     elemento.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(texto));
     elemento.setAttribute('download', nomeArquivo);
-
     elemento.style.display = 'none';
     document.body.appendChild(elemento);
-
     elemento.click();
-
     document.body.removeChild(elemento);
 }
