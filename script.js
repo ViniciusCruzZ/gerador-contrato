@@ -117,3 +117,34 @@ function downloadContrato(texto, nomeArquivo) {
     elemento.click();
     document.body.removeChild(elemento);
 }
+
+document.getElementById('telefone_contratante').addEventListener('input', formatarTelefone);
+document.getElementById('telefone_contratado').addEventListener('input', formatarTelefone);
+
+function formatarTelefone(event) {
+    const input = event.target;
+    const numero = input.value.replace(/\D/g, '');
+    const tamanho = numero.length;
+
+    if (tamanho === 0) {
+        input.value = '';
+    } else if (tamanho <= 2) {
+        input.value = '+' + numero;
+    } else if (tamanho <= 4) {
+        input.value = '+' + numero.slice(0, 2) + ' (' + numero.slice(2);
+    } else if (tamanho <= 9) {
+        input.value = '+' + numero.slice(0, 2) + ' (' + numero.slice(2, 4) + ') ' + numero.slice(4);
+    } else {
+        input.value = '+' + numero.slice(0, 2) + ' (' + numero.slice(2, 4) + ') ' + numero.slice(4, 9) + '-' + numero.slice(9);
+    }
+}
+
+const inputValorServico = document.getElementById('valor_servico');
+
+inputValorServico.addEventListener('input', function (event) {
+    let valor = event.target.value.replace(/\D/g, '');
+    valor = (valor / 100).toFixed(2);
+    valor = parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    event.target.value = valor;
+});
